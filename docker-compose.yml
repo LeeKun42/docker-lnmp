@@ -57,12 +57,12 @@ services:
     command: redis-server --requirepass "${REDIS_PASSWD}" #设置密码
     restart: unless-stopped
 
-  supervisor:
-      build: ./supervisor
-      volumes:
-        - ${LOCAL_CODE_PATH}:/opt/www/
-        - ./supervisor/conf.d:/etc/supervisor/conf.d
-        - ./supervisor/cron.d:/etc/cron.d
-      depends_on:
-        - php
-      restart: unless-stopped
+#  supervisor:
+#      build: ./supervisor
+#      volumes:
+#        - ${LOCAL_CODE_PATH}:/opt/www/
+#        - ./supervisor/conf.d:/etc/supervisor/conf.d
+#        - ./supervisor/cron.d:/etc/cron.d
+#      depends_on:
+#        - php
+#      restart: unless-stopped
