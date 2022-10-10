@@ -65,7 +65,8 @@ RUN cd /usr/local/etc/php-fpm.d/ && \
     sed  -i '/^pm.start_servers/s/[0-9]\+/10/g' www.conf && \
     sed  -i '/^pm.min_spare_servers/s/[0-9]\+/10/g' www.conf && \
     sed  -i '/^pm.max_spare_servers/s/[0-9]\+/50/g' www.conf && \
-    echo 'php_admin_value[memory_limit] = 500M' >> www.conf \
+    echo 'php_admin_value[memory_limit] = 500M' >> www.conf
 
+RUN echo 'swoole.use_shortname=Off' >> /usr/local/etc/php/php.ini
 
 WORKDIR /opt/www
