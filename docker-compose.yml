@@ -14,21 +14,27 @@ services:
       - "8080:8080"
     restart: unless-stopped
 
-  php:
-    build:
-      context: ./php/
-    volumes:
-      - ${LOCAL_CODE_PATH}:/opt/www/ #本地项目目录映射到php容器目录（必须映射）
-#      - ./php/php.ini:/usr/local/etc/php/php.ini
-    stdin_open: true
-    tty: true
-    restart: unless-stopped
-
   php8:
     build:
       context: ./php8/
     volumes:
       - ${LOCAL_CODE_PATH}:/opt/www/ #本地项目目录映射到php容器目录（必须映射）
+    extra_hosts:            # 设置容器 hosts
+      - "local.erp.com:192.168.31.136"
+    restart: unless-stopped
+
+  php:
+    image: php
+    build:
+      context: ./php/
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+        NPM_VERSION: ${NPM_VERSION}
+    volumes:
+      - ${LOCAL_CODE_PATH}:/opt/www/ #本地项目目录映射到php容器目录（必须映射）
+      #- ./php/php.ini:/usr/local/etc/php/php.ini
+    extra_hosts:            # 设置容器 hosts
+      - "oss-cn-shenzhen.aliyuncs.com:120.77.166.198"
     ports:
       - "9501:9501"
       - "9502:9502"
@@ -53,7 +59,7 @@ services:
   redis-db:
     image: redis
     volumes:
-      - ./redis/db_data:/plugins
+      - ./redis/db_data:/data
     ports:
       - "${REDIS_DB_PORT}:6379"
     command: redis-server --requirepass "${REDIS_PASSWD}" --appendonly yes #设置密码， 持久化到磁盘
@@ -126,3 +132,12 @@ services:
     ports:
       - "5405:5405"
     restart: always
+#  supervisor:
+#      build: ./supervisor
+#      volumes:
+#        - ${LOCAL_CODE_PATH}:/opt/www/
+#        - ./supervisor/conf.d:/etc/supervisor/conf.d
+#        - ./supervisor/cron.d:/etc/cron.d
+#      depends_on:
+#        - php
+#      restart: unless-stopped

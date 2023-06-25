@@ -35,7 +35,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 
 ##安装pecl扩展
 RUN pecl install redis && docker-php-ext-enable redis
-#RUN pecl install swoole && docker-php-ext-enable swoole
+RUN pecl install swoole && docker-php-ext-enable swoole
 #grpc protobuf扩展
 #RUN pecl install protobuf && docker-php-ext-enable protobuf
 
@@ -48,14 +48,14 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 ##安装node
-#ARG NPM_VERSION
-#RUN cd /tmp/ && wget https://npm.taobao.org/mirrors/node/v${NPM_VERSION}/node-v${NPM_VERSION}-linux-x64.tar.xz && \
-#    tar -xvJf node-v${NPM_VERSION}-linux-x64.tar.xz && \
-#    ln -s /tmp/node-v${NPM_VERSION}-linux-x64/bin/node  /usr/local/bin/ && \
-#    ln -s /tmp/node-v${NPM_VERSION}-linux-x64/bin/npm  /usr/local/bin/
-#RUN npm config set registry https://registry.npm.taobao.org --global
-#RUN npm config set disturl https://npm.taobao.org/dist --global
-#RUN npm install --global node-gyp
+ARG NPM_VERSION
+RUN cd /tmp/ && wget https://npm.taobao.org/mirrors/node/v${NPM_VERSION}/node-v${NPM_VERSION}-linux-x64.tar.xz && \
+    tar -xvJf node-v${NPM_VERSION}-linux-x64.tar.xz && \
+    ln -s /tmp/node-v${NPM_VERSION}-linux-x64/bin/node  /usr/local/bin/ && \
+    ln -s /tmp/node-v${NPM_VERSION}-linux-x64/bin/npm  /usr/local/bin/
+RUN npm config set registry https://registry.npm.taobao.org --global
+RUN npm config set disturl https://npm.taobao.org/dist --global
+RUN npm install --global node-gyp
 
 
 # Set Fpm Max Value
@@ -67,5 +67,6 @@ RUN cd /usr/local/etc/php-fpm.d/ && \
     echo 'php_admin_value[memory_limit] = 500M' >> www.conf
 
 RUN echo 'server_type=development' >> /usr/local/etc/php/php.ini
+RUN echo 'swoole.use_shortname=Off' >> /usr/local/etc/php/php.ini
 
 WORKDIR /opt/www
