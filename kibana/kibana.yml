@@ -1,0 +1,8 @@
+server.host: 0.0.0.0
+server.shutdownTimeout: 5s
+elasticsearch.hosts: ['http://192.168.102.74:9200']
+monitoring.ui.container.elasticsearch.enabled: true
+elasticsearch.username: kibana_system
+elasticsearch.password: tQfGMtENk7DVhPnf-xm4
+# 开启中文模式
+i18n.locale: "zh-CN"
