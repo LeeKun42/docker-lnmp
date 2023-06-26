@@ -5,14 +5,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Chongqing
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #更换阿里云 apt-get镜像源
-RUN printf "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib\n \
-deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib\n \
-deb https://mirrors.aliyun.com/debian-security/ bullseye-security main\n \
-deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main\n \
-deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib\n \
-deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib\n \
-deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib\n \
-deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib" > /etc/apt/sources.list
+#RUN printf "deb http://mirrors.ustc.edu.cn/debian bullseye main non-free contrib\n \
+#deb-src http://mirrors.ustc.edu.cn/debian bullseye main non-free contrib\n \" > /etc/apt/sources.list
 
 ##安装基础扩展
 RUN apt-get update && apt-get install -y \
@@ -35,7 +29,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 
 ##安装pecl扩展
 RUN pecl install redis && docker-php-ext-enable redis
-RUN pecl install swoole && docker-php-ext-enable swoole
 #grpc protobuf扩展
 #RUN pecl install protobuf && docker-php-ext-enable protobuf
 

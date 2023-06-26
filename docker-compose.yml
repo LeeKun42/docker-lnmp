@@ -30,7 +30,6 @@ services:
     restart: unless-stopped
 
   php:
-    image: php
     build:
       context: ./php/
       args:
