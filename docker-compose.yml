@@ -93,46 +93,53 @@ services:
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.102.74:9092
-  es:
-    image: elasticsearch:8.8.0
-    environment:
-      - node.name = es01
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=123456 # password for user: elastic
-      - KIBANA_PASSWORD=tQfGMtENk7DVhPnf-xm4 # password for user: kibana_system
-    volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
-      - ./elasticsearch/logs:/usr/share/elasticsearch/logs
-      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#  es:
+#    image: elasticsearch:8.8.0
+#    environment:
+#      - node.name = es01
+#      - discovery.type=single-node
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - ELASTIC_PASSWORD=123456 # password for user: elastic
+#      - KIBANA_PASSWORD=tQfGMtENk7DVhPnf-xm4 # password for user: kibana_system
+#    volumes:
+#      - ./elasticsearch/data:/usr/share/elasticsearch/data
+#      - ./elasticsearch/logs:/usr/share/elasticsearch/logs
+#      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#    ports:
+#      - "9200:9200"
+#    restart: unless-stopped
+#  es-head:
+#    image: mobz/elasticsearch-head:5
+#    volumes:
+#      - ./elasticsearch/vendor.js:/usr/src/app/_site/vendor.js
+#    ports:
+#      - "9100:9100"
+#    restart: always
+#  kibana:
+#    image: kibana:8.8.0
+#    volumes:
+#      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+#    ports:
+#      - "5601:5601"
+#    restart: always
+#  logstash:
+#    image: logstash:8.8.0
+#    volumes:
+#      - ${LOCAL_CODE_PATH}/precision_solution/log/:/var/log/solution/
+#      - ${LOCAL_CODE_PATH}/sumian-shell/runtime/logs:/var/log/sumian-shell/
+#      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+#    ports:
+#      - "5405:5405"
+#    restart: always
+  jenkins:
+    image: jenkins/jenkins:2.401.2-lts
     ports:
-      - "9200:9200"
-    restart: unless-stopped
-  es-head:
-    image: mobz/elasticsearch-head:5
-    volumes:
-      - ./elasticsearch/vendor.js:/usr/src/app/_site/vendor.js
-    ports:
-      - "9100:9100"
-    restart: always
-  kibana:
-    image: kibana:8.8.0
-    volumes:
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    ports:
-      - "5601:5601"
-    restart: always
-  logstash:
-    image: logstash:8.8.0
-    volumes:
-      - ${LOCAL_CODE_PATH}/precision_solution/log/:/var/log/solution/
-      - ${LOCAL_CODE_PATH}/sumian-shell/runtime/logs:/var/log/sumian-shell/
-      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-    ports:
-      - "5405:5405"
-    restart: always
+      - "8890:8080"
+      - "8891:50000"
+    volumes: # 卷挂载路径
+      - ./jenkins/home:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
 #  supervisor:
 #      build: ./supervisor
 #      volumes:
