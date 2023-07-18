@@ -99,6 +99,21 @@ services:
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.102.74:9092
+  registry:
+    image: registry:latest
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./registry/images:/tmp/registry
+    restart: always
+  registry-web:
+    image: hyper/docker-registry-web:latest
+    ports:
+      - '5001:8080'
+    environment:
+      REGISTRY_NAME: 192.168.102.74:5000
+      REGISTRY_URL: http://192.168.102.74:5000/v2
+    restart: always
 #  es:
 #    image: elasticsearch:8.8.0
 #    environment:
@@ -144,6 +159,8 @@ services:
     ports:
       - "8890:8080"
       - "8891:50000"
+    environment:
+      TZ: Asia/Shanghai
     volumes: # 卷挂载路径
       - ./jenkins/home:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
 #  supervisor:

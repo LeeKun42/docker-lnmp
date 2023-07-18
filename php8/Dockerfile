@@ -2,7 +2,7 @@ FROM php:8.1-cli
 
 #设置时区和环境变量
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Asia/Beijing
+ENV TZ=Asia/Chongqing
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #更换阿里云 apt-get镜像源
 RUN printf "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib\n \
