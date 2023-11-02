@@ -14,20 +14,20 @@ services:
       - "8080:8080"
     restart: unless-stopped
 
-  php8:
-    build:
-      context: ./php8/
-    volumes:
-      - ${LOCAL_CODE_PATH}:/opt/www/ #本地项目目录映射到php容器目录（必须映射）
-    extra_hosts:            # 设置容器 hosts
-      - "local.erp.com:192.168.31.136"
-    ports:
-      - "9501:9501"
-      - "9502:9502"
-      - "9503:9503"
-    stdin_open: true
-    tty: true
-    restart: unless-stopped
+#  php8:
+#    build:
+#      context: ./php8/
+#    volumes:
+#      - ${LOCAL_CODE_PATH}:/opt/www/ #本地项目目录映射到php容器目录（必须映射）
+#    extra_hosts:            # 设置容器 hosts
+#      - "local.erp.com:192.168.31.136"
+#    ports:
+#      - "9501:9501"
+#      - "9502:9502"
+#      - "9503:9503"
+#    stdin_open: true
+#    tty: true
+#    restart: unless-stopped
 
   php:
     build:
@@ -90,60 +90,76 @@ services:
       - "9848:9848"
       - "9849:9849"
     restart: unless-stopped
-  kafka:
-    image: bitnami/kafka:latest
-    ports:
-      - '9092:9092'
-    volumes:
-      - ./kafka/data:/bitnami/kafka
+  mongo:
+    image: mongo:latest
     environment:
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.102.74:9092
-  registry:
-    image: registry:latest
+      - TZ=Asia/Shanghai
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
     ports:
-      - '5000:5000'
+      - "27017:27017"
     volumes:
-      - ./registry/images:/tmp/registry
+      - ./mongodb/data/:/data/db
+      - ./mongodb/logs/:/data/logs
+      - ./mongodb/config/:/data/configdb
+    command:
+      - "--auth"
     restart: always
-  registry-web:
-    image: hyper/docker-registry-web:latest
-    ports:
-      - '5001:8080'
-    environment:
-      REGISTRY_NAME: 192.168.102.74:5000
-      REGISTRY_URL: http://192.168.102.74:5000/v2
-    restart: always
-  es:
-    image: elasticsearch:8.8.0
-    environment:
-      - node.name = es01
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=123456 # password for user: elastic
-      - KIBANA_PASSWORD=tQfGMtENk7DVhPnf-xm4 # password for user: kibana_system
-    volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
-      - ./elasticsearch/logs:/usr/share/elasticsearch/logs
-      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-    ports:
-      - "9200:9200"
-    restart: unless-stopped
-  es-head:
-    image: mobz/elasticsearch-head:5
-    volumes:
-      - ./elasticsearch/vendor.js:/usr/src/app/_site/vendor.js
-    ports:
-      - "9100:9100"
-    restart: always
-  kibana:
-    image: kibana:8.8.0
-    volumes:
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    ports:
-      - "5601:5601"
-    restart: always
+#  kafka:
+#    image: bitnami/kafka:latest
+#    ports:
+#      - '9092:9092'
+#    volumes:
+#      - ./kafka/data:/bitnami/kafka
+#    environment:
+#      - ALLOW_PLAINTEXT_LISTENER=yes
+#      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.102.74:9092
+#  registry:
+#    image: registry:latest
+#    ports:
+#      - '5000:5000'
+#    volumes:
+#      - ./registry/images:/tmp/registry
+#    restart: always
+#  registry-web:
+#    image: hyper/docker-registry-web:latest
+#    ports:
+#      - '5001:8080'
+#    environment:
+#      REGISTRY_NAME: 192.168.102.74:5000
+#      REGISTRY_URL: http://192.168.102.74:5000/v2
+#    restart: always
+#  es:
+#    image: elasticsearch:8.8.0
+#    environment:
+#      - node.name = es01
+#      - discovery.type=single-node
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - ELASTIC_PASSWORD=123456 # password for user: elastic
+#      - KIBANA_PASSWORD=tQfGMtENk7DVhPnf-xm4 # password for user: kibana_system
+#    volumes:
+#      - ./elasticsearch/data:/usr/share/elasticsearch/data
+#      - ./elasticsearch/logs:/usr/share/elasticsearch/logs
+#      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#    ports:
+#      - "9200:9200"
+#    restart: unless-stopped
+#  es-head:
+#    image: mobz/elasticsearch-head:5
+#    volumes:
+#      - ./elasticsearch/vendor.js:/usr/src/app/_site/vendor.js
+#    ports:
+#      - "9100:9100"
+#    restart: always
+#  kibana:
+#    image: kibana:8.8.0
+#    volumes:
+#      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+#    ports:
+#      - "5601:5601"
+#    restart: always
 #  logstash:
 #    image: logstash:8.8.0
 #    volumes:
@@ -154,15 +170,15 @@ services:
 #    ports:
 #      - "5405:5405"
 #    restart: always
-  jenkins:
-    image: jenkins/jenkins:2.401.2-lts
-    ports:
-      - "8890:8080"
-      - "8891:50000"
-    environment:
-      TZ: Asia/Shanghai
-    volumes: # 卷挂载路径
-      - ./jenkins/home:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
+#  jenkins:
+#    image: jenkins/jenkins:2.401.2-lts
+#    ports:
+#      - "8890:8080"
+#      - "8891:50000"
+#    environment:
+#      TZ: Asia/Shanghai
+#    volumes: # 卷挂载路径
+#      - ./jenkins/home:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
 #  supervisor:
 #      build: ./supervisor
 #      volumes:
